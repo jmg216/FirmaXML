@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Permissions: all-permissions
+Codebase: *
+Application-Name: Firma Applet
+Caller-Allowable-Codebase: *
+X-COMMENT: Main-Class will be added automatically by build
+
