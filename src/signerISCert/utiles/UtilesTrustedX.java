@@ -7,8 +7,10 @@ package signerISCert.utiles;
 
 import com.isa.SW.SWHelperFactory;
 import com.isa.SW.entities.User;
+import com.isa.SW.entities.VerifyResponse;
 import com.isa.SW.exceptions.SWException;
 import com.isa.SW.services.ServicioAA;
+import com.isa.SW.services.ServicioDSV;
 import com.isa.SW.services.ServicioEP;
 import com.isa.SW.services.ServicioFirma;
 import com.isa.SW.services.ServicioKM;
@@ -102,8 +104,8 @@ public class UtilesTrustedX {
         return servF.verificarPKCS7( usuario, password, singBase64 );
     }    
     
-    public static boolean verificarFirmaEnvelopingXML(String artifact, String data ) throws SWException{
-        ServicioFirma servF = SWHelperFactory.createServiceFirma();
+    public static VerifyResponse verificarFirmaEnvelopingXML(String artifact, String data ) throws SWException{
+        ServicioDSV servF = SWHelperFactory.createServiceDSV();
         return servF.verificarXMLEnveloping(artifact, data );
     }    
         

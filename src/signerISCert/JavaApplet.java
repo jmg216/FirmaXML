@@ -12,6 +12,7 @@
 package signerISCert;
 
 //import java.security.Certificate;
+import com.isa.SW.entities.VerifyResponse;
 import com.isa.SW.exceptions.SWException;
 import com.isa.SW.utils.UtilesSWHelper;
 import java.io.File;
@@ -1718,19 +1719,21 @@ public class JavaApplet extends javax.swing.JApplet {
                                                 new DirectPasswordProvider( new String(jPasswordField1.getPassword()) ),
                                                 null,
                                                 true );
+                System.out.println("Se instancia PKCS11.");
                 XadesSigningProfile p = new XadesBesSigningProfile( kp );
                 XadesSigner signer = p.newSigner();
                 AlgorithmsProvider algorithmProvider = new AlgorithmsProvider();
                 p.withAlgorithmsProviderEx( algorithmProvider );
-               
+                System.out.println("Se crea nodo a firmar.");
                 NodoFirma nodoFirma = new NodoFirma(UtilesResources.getProperty("appletConfig.NodoFirma"), getData());
                 Document doc = nodoFirma.getDocument();
                 
+
                 DataObjectDesc obj = new EnvelopedXmlObject(doc.getDocumentElement(), "text/plain", "http://www.w3.org/2000/09/xmldsig#");                
                 SignedDataObjects dataObjs = new SignedDataObjects(obj);
+                System.out.println("******* Previo a firmar ***************");
                 XadesSignatureResult result = signer.sign(dataObjs, doc);
-                
-                System.out.println("******** Procesando firma **************");
+                System.out.println("******** Firmado **************");
                 String xmlSignature = Utiles.printDocument(result.getSignature().getDocument());
                 String xmlSignatureBase64 = org.apache.xml.security.utils.Base64.encode(xmlSignature.getBytes());
                 firmaXadesExitosa( xmlSignatureBase64, xmlSignature );
@@ -1778,23 +1781,24 @@ public class JavaApplet extends javax.swing.JApplet {
     
     }
     
-    public void verificarFirmaXades( String base64Firma ){            
-            hash = base64Firma;
+    public void verificarFirmaXades( String xmlFirma ){            
+            hash = xmlFirma;
             Thread thread = new Thread(){
                 @Override
                 public void run(){
                     try{
                         artifact = null;
                         artifact = UtilesTrustedX.login(UtilesSWHelper.getAdminUsuario(), UtilesSWHelper.getAdminPassword());
-                        boolean isVerify = UtilesTrustedX.verificarFirmaEnvelopingXML(artifact, hash);
+                        VerifyResponse v = UtilesTrustedX.verificarFirmaEnvelopingXML(artifact, hash);
+                        boolean isVerify = v.isValida();
                         UtilesTrustedX.logout(UtilesSWHelper.getAdminUsuario(), artifact);
                         
                         if (isVerify){
-                            validarFirmaExitosa() ;   
+                            validarFirmaExitosa( v.getCn() ) ;   
                             mostrarFirmaVerificada();                            
                         }
                         else{
-                            validarFirmaNoValida();
+                            validarFirmaNoValida( v.getCn() );
                             mostrarErrorFirmaInvalida();
                         }
                     }
@@ -1827,14 +1831,14 @@ public class JavaApplet extends javax.swing.JApplet {
             mostrarProcesando(); 
     }
     
-    private void validarFirmaExitosa(){
+    private void validarFirmaExitosa( String cn ){
         JSObject win = (JSObject) JSObject.getWindow(this);
-        win.call("validarFirmaExitosa", null);
+        win.call("validarFirmaExitosa", new String[]{  cn });
     } 
     
-    private void validarFirmaNoValida(){
+    private void validarFirmaNoValida( String cn ){
         JSObject win = (JSObject) JSObject.getWindow(this);
-        win.call("validarFirmaNoValida", null);        
+        win.call("validarFirmaNoValida", new String[]{ cn });        
     }
     
     private void validarFirmaError(String msg, String error){
