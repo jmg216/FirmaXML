@@ -1143,8 +1143,8 @@ public class JavaApplet extends javax.swing.JApplet {
 
         jLabel6.setFont(new java.awt.Font("Arial", 1, 11)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(255, 0, 51));
-        jLabel6.setText("No se puede identificar el token.");
-        tokenNoReconocido.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(166, 77, 190, -1));
+        jLabel6.setText("No se puedo identificar el token. Reconéctelo.");
+        tokenNoReconocido.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 80, 310, -1));
 
         okButton5.setBackground(new java.awt.Color(245, 244, 244));
         okButton5.setFont(new java.awt.Font("Arial", 0, 11)); // NOI18N
@@ -1984,7 +1984,7 @@ public class JavaApplet extends javax.swing.JApplet {
             }
         }
         catch (IOException ex) {
-            
+            ex.printStackTrace();
             if (ex.getCause() instanceof LoginException){
                 LoginException log = (LoginException) ex.getCause();
                 PKCS11Exception pkcs = (PKCS11Exception) log.getCause();
@@ -2004,12 +2004,15 @@ public class JavaApplet extends javax.swing.JApplet {
             Logger.getLogger(JavaApplet.class.getName()).log(Level.SEVERE, null, ex);
         }
         catch (KeyStoreException ex) {
+            ex.printStackTrace();
             Logger.getLogger(JavaApplet.class.getName()).log(Level.SEVERE, null, ex);
         }
         catch (NoSuchAlgorithmException ex) {
+            ex.printStackTrace();
             Logger.getLogger(JavaApplet.class.getName()).log(Level.SEVERE, null, ex);
         } 
         catch (CertificateException ex) {
+            ex.printStackTrace();
             Logger.getLogger(JavaApplet.class.getName()).log(Level.SEVERE, null, ex);
         }  
         limpiarPasswordFields();        
